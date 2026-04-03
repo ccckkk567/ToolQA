@@ -1,0 +1,56 @@
+[示例 1：目标分解与表格查询 - 航班数据集]
+Question: 2022年6月5日从MIA飞往LAS的AA2319航班的起飞时间是什么？
+Thought 1: 我需要查询航班数据库，找到日期为2022-06-05，出发地为MIA，目的地为LAS，航班号为AA2319的起飞时间。我应该使用 sql_interpreter 工具。
+Action 1: sql_interpreter[SELECT departure_time FROM flights WHERE date='2022-06-05' AND origin='MIA' AND destination='LAS' AND flight_number='AA2319']
+Observation 1: [("21:43",)]
+Thought 2: 数据库返回了结果 "21:43"，这就是该航班的起飞时间。我已经得到了答案。
+Action 2: finish[21:43]
+---
+[示例 2：搜索失败与策略调整 ]
+Question: 论文《Attention Is All You Need》的主要作者是谁？
+Thought 1: 我需要搜索这篇论文的作者。我先尝试搜索完整的句子。
+Action 1: search[论文《Attention Is All You Need》的主要作者是谁]
+Observation 1: Could not find results.
+Thought 2: 搜索失败了。查询词太长或包含了多余的疑问词。我应该提取核心实体，只搜索论文的英文原名 "Attention Is All You Need"。
+Action 2: search[Attention Is All You Need]
+Observation 2: ...Ashish Vaswani, Noam Shazeer, Niki Parmar et al. introduced the Transformer architecture in "Attention Is All You Need"...
+Thought 3: 观察结果显示，引入该架构的作者是 Ashish Vaswani 等人。
+Action 3: finish[Ashish Vaswani]
+---
+[示例 3：多步工具组合与数学计算 - GSM8K]
+Question: 约翰有5个苹果，他又买了3袋苹果，每袋4个。他现在一共有多少个苹果？
+Thought 1: 我需要先计算他新买了多少个苹果，然后再和原来的5个相加。我先用计算器算 3 * 4。
+Action 1: calculator[3 * 4]
+Observation 1: 12
+Thought 2: 他新买了12个苹果。现在我需要计算总数：5 + 12。
+Action 2: calculator[5 + 12]
+Observation 2: 17
+Thought 3: 计算完成，总数是17。
+Action 3: finish[17]
+---
+[示例 4：多跳推理与信息提取 - DBLP图谱]
+Question: 2020年，"John Doe" 的导师发表了多少篇文章？
+Thought 1: 这是一个多步问题。我首先需要找到 "John Doe" 的导师是谁。
+Action 1: search[John Doe advisor]
+Observation 1: John Doe completed his PhD under the supervision of Dr. Alan Smith.
+Thought 2: 观察结果表明 John Doe 的导师是 Dr. Alan Smith。接下来我需要查询 Dr. Alan Smith 在 2020 年发表的文章数量。
+Action 2: sql_interpreter[SELECT COUNT(*) FROM papers WHERE author='Alan Smith' AND year=2020]
+Observation 2: [(5,)]
+Thought 3: 数据库返回结果为 5，说明他发表了 5 篇文章。
+Action 3: finish[5]
+---
+[示例 5：常识推理与条件判断 - Yelp/Coffee]
+Question: "Blue Bottle Coffee" 的评分是否高于 4.5 分？
+Thought 1: 我需要先获取 "Blue Bottle Coffee" 的评分，然后再判断它是否大于 4.5。
+Action 1: sql_interpreter[SELECT rating FROM coffee_shops WHERE name='Blue Bottle Coffee']
+Observation 1: [(4.2,)]
+Thought 2: 观察结果显示评分为 4.2。根据常识，4.2 不大于 4.5，所以答案是否定的。
+Action 2: finish[No]
+---
+[示例 6：处理歧义与综合答案 - Agenda个人日程]
+Question: 如果今天是5月1日星期一，我与Sarah的会议是在星期几？
+Thought 1: 我需要先查阅日程表，找到与 Sarah 开会的具体日期。
+Action 1: search[meeting with Sarah]
+Observation 1: Meeting with Sarah is scheduled for May 3rd at 10 AM.
+Thought 2: 会议日期是 5月3日。已知今天是 5月1日星期一，那么 5月2日是星期二，5月3日就是星期三。
+Action 2: finish[Wednesday]
